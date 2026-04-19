@@ -1,0 +1,7 @@
+*.zip
+*.json
+*.xlsx
+*-reportjson
+*-reportyaml
+.venv
+.idea
