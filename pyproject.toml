@@ -10,5 +10,6 @@ maintainers = [
 dependencies = [
     "requests>=2.33.1",
 ]
+license = "MIT"
 [project.scripts]
 mend-reporting-tool = "mend_reporting_tool.main:main"
