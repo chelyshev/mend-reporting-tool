@@ -40,10 +40,15 @@ $ ls -l mend-reports/
 -rw-r--r-- 1 alex alex 1033049 Apr 20 23:50 '<Project_Name>-project-SPDX-reportyaml'
 ```
 
-### How To Install locally from source code
+### How To Install
 ```shell
+pip install 'mend-reporting-tool==0.1.0'
+```
+
+### How To Install from source code
+```shell
+git clone https://github.com/chelyshev/mend-reporting-tool.git
 python3 -m venv .venv
 source .venv/bin/activate
 pip install -e .
 ```
-
