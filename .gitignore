@@ -5,3 +5,6 @@
 *-reportyaml
 .venv
 .idea
+mend-reports
+dist
+src/mend_reporting_tool.egg-info

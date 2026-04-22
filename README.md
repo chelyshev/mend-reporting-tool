@@ -1,17 +1,11 @@
 # Mend Report Generation tool
-
-### How To Install
-```shell
-python3 -m venv .venv
-source .venv/bin/activate
-pip install -r requirements.txt
-```
+This is script to generate reports through [Mend API v3.0](https://api-docs.mend.io/platform/3.0).
 
 ### How To Use
 ```shell
-$ python main.py -h
-usage: main.py [-h] -mendAPI MENDAPI -orgUUID ORGUUID -userEmail USEREMAIL -userKey USERKEY -projectUUID PROJECTUUID -reportType REPORTTYPE
-               [-format FORMAT]
+$ mend-reporting-tool -h
+usage: mend-reporting-tool [-h] -mendAPI MENDAPI -orgUUID ORGUUID -userEmail USEREMAIL -userKey USERKEY -projectUUID PROJECTUUID
+                           [-reportType REPORTTYPE] [-format FORMAT] [-unzip UNZIP]
 
 This is script to generate reports through Mend API v3.0.
 
@@ -19,17 +13,37 @@ options:
   -h, --help            show this help message and exit
   -mendAPI MENDAPI      Mend API v3.0 server hostname without https://, like `api-saas.whitesourcesoftware.com`
   -orgUUID ORGUUID      Organization UUID
-  -userEmail USEREMAIL  user Email
-  -userKey USERKEY      user Key
+  -userEmail USEREMAIL  User Email
+  -userKey USERKEY      User Key
   -projectUUID PROJECTUUID
-                        Project UUID
+                        List of Project UUIDs separeted by ','
   -reportType REPORTTYPE
-                        report Type, for example: `vulnerabilities`, `sbom`, `spdx`, `spdx_2_3`, `cycloneDX`, `cycloneDX_1_5`, `cycloneDX_1_6`.     
-                        The `vulnerabilities` report type generates vulnerability report. The `sbom` report type generates `spdx` format.
-  -format FORMAT        report Format, acceptable formats for `vulnerabilities` reportType: `json`, `excel`; for `sbom` reportType: `json`, `yaml`
-  
+                        Report Type, for example: `vulnerabilities`, `sbom`, `spdx`, `spdx_2_3`, `cycloneDX`, `cycloneDX_1_5`,
+                        `cycloneDX_1_6`. The `vulnerabilities` report type generates vulnerability report. The `sbom` report type generates    
+                        `spdx` format. Optional, default: `sbom`
+  -format FORMAT        Report Format, acceptable formats for `vulnerabilities` reportType: `json`, `excel`; for `sbom` reportType: `json`,    
+                        `yaml`. Optional, default: `json`
+  -unzip UNZIP          Extract report to the 'mend-reports' folder. Variants: yes, no. Optional, default: `no`
 
-### Response example:
-Response body saved to 'report-888b5eea-985c-4646-bae3-2bf6353f14b4.zip' successfully.
-Report is ready
+### Example:
+mend-reporting-tool  -mendAPI $MEND_API -orgUUID $MEND_ORGANIZATION_UUID -userEmail $MEND_EMAIL  -userKey $MEND_USER_KEY -projectUUID $PROJECT_UUID -reportType sbom -format yaml -unzip yes
+
+### Processing Project UUID: <Project_UUID>
+>>> The report saved to 'report-<Project_UUID>.zip' successfully.
+>>> The report 'report-<Project_UUID>.zip' extracted to 'mend-reports' folder.
+>>> Deleted: report-<Project_UUID>.zip
+>>> Report is ready in `mend-reports` folder.
+...
+
+# Content of `mend-reports` folder:
+$ ls -l mend-reports/
+-rw-r--r-- 1 alex alex 1033049 Apr 20 23:50 '<Project_Name>-project-SPDX-reportyaml'
 ```
+
+### How To Install locally from source code
+```shell
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -e .
+```
+
