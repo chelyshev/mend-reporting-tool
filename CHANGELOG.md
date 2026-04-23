@@ -5,3 +5,8 @@
 - v0.2.1:
   - fix problem with generation of the CycloneDX SBoM reports
   - add error handling for unsuccessful authentication
+- v0.2.2
+  - add error handling for generation of reports
+  - change default values for the parameters: -reportType, -format, -unzip
+  - update README.md
+  - add parameter --version

@@ -1,11 +1,19 @@
 from time import sleep
-
 import requests
 import argparse
 import zipfile
 import os
 import sys
+from importlib.metadata import version, PackageNotFoundError
 
+PACKAGE_NAME = "mend-reporting-tool"
+
+
+def get_version():
+  try:
+    return version(PACKAGE_NAME)
+  except PackageNotFoundError:
+    return "unknown (package not installed)"
 
 def getRefreshToken(baseURL, email, userKey):
   url = "https://"+baseURL+"/api/v3.0/login"
@@ -23,7 +31,7 @@ def getRefreshToken(baseURL, email, userKey):
 
   data = response.json()
   if data["response"] == "Login failed":
-    print(">>> Login failed. Check your Mend User Email and Mend User Key.")
+    print(">>> Login failed. Check your Mend User Email (-userEmail) and Mend User Key (-userKey).")
     sys.exit(1)
   return data["response"]["refreshToken"]
 
@@ -66,6 +74,10 @@ def generateSBOM(baseURL, projectUUID, reportType, reportFormat, accessToken):
   response = requests.post(url, json=payload, headers=headers)
 
   data = response.json()
+  # print(data)
+  if "errorMessage" in data["response"]:
+    print(f">>> {data["response"]["errorMessage"]}. Check the Report Format parameter (-format) and try again.")
+    sys.exit(1)
   return data["response"]["uuid"]
 
 def checkReportStatus(baseURL, orgUuid, reportUUID, accessToken):
@@ -118,10 +130,19 @@ def unzipReport(projectUUID):
     print(f">>> Deleted: {pathZipReport}")
 
 def main():
-  # Create parser
+  # First parser: only for --version
+  version_parser = argparse.ArgumentParser(add_help=False)
+  version_parser.add_argument("-v","--version", action="store_true", help="Show version and exit")
+  args, remaining_argv = version_parser.parse_known_args()
+
+  if args.version:
+    print(get_version())
+    sys.exit(0)
+
+  # Main parser: all other arguments
   parser = argparse.ArgumentParser(description="This is script to generate reports through Mend API v3.0.")
 
-  # Add arguments
+  parser.add_argument("-v","--version", action="store_true", help="Show version and exit", required=False)
   parser.add_argument("-mendAPI",
                       help="Mend API v3.0 server hostname without https://, like `api-saas.whitesourcesoftware.com`",
                       required=True)
@@ -129,14 +150,14 @@ def main():
   parser.add_argument("-userEmail", help="User Email", required=True)
   parser.add_argument("-userKey", help="User Key", required=True)
   parser.add_argument("-projectUUID", help="List of Project UUIDs separeted by ','", required=True)
-  parser.add_argument("-reportType", default="sbom",
-                      help="Report Type, for example: `vulnerabilities`, `sbom`, `spdx`, `spdx_2_3`, `cycloneDX`, `cycloneDX_1_5`, `cycloneDX_1_6`. The `vulnerabilities` report type generates vulnerability report. The `sbom` report type generates `spdx` format. Optional, default: `sbom`",
+  parser.add_argument("-reportType", default="cycloneDX_1_6",
+                      help="Report Type, acceptable report types: `vulnerabilities`, `inventory`, `dueDiligence`, `risk`, `sbom`, `spdx`, `spdx_2_3`, `cycloneDX`, `cycloneDX_1_5`, `cycloneDX_1_6`. The `vulnerabilities` report type generates vulnerability report. The `dueDiligence` report type generates OSS licenses risk analysis report. The `risk` report type generates OSS security risk analysis report. The `inventory` report type generates OSS inventory report. The `sbom`,`spdx`, and `spdx_2_3` report types generate SBoM in `SPDX` format. The `cycloneDX`, `cycloneDX_1_5`, and `cycloneDX_1_6` report types generate SBoM in `CycloneDX` format. Optional, default: `cycloneDX_1_6`",
                       required=False)
   parser.add_argument("-format", default="json",
-                      help="Report Format, acceptable formats for `vulnerabilities` reportType: `json`, `excel`; for `sbom` reportType: `json`, `yaml`. Optional, default: `json`",
+                      help="Report Format, acceptable formats for  reportType `vulnerabilities`: `json`, `excel`; for reportType `sbom`,`spdx`,`spdx_2_3`: `json`, `yaml`; for reportType `cycloneDX`: `json`; for reportType `risk`: `pdf`;  for reportType `inventory`: `excel`;  for reportType `dueDiligence`: `excel`. Optional, default: `json`",
                       required=False)
-  parser.add_argument("-unzip", default="no",
-                      help="Extract report to the 'mend-reports' folder. Variants: yes, no. Optional, default: `no`",
+  parser.add_argument("-unzip", default="yes",
+                      help="Extract report to the 'mend-reports' folder. Variants: yes, no. Optional, default: `yes`. In case of `no` report in .zip format will be saved in the current directory",
                       required=False)
 
   # Parse arguments
@@ -150,6 +171,7 @@ def main():
   reportType = args.reportType
   reportFormat = args.format
   extractReport = args.unzip
+
   refreshToken = getRefreshToken(baseURL, userEmail, userKey)
   accessToken = getAccessToken(baseURL, refreshToken)
   # print (accessToken)
