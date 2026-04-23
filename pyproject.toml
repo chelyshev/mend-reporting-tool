@@ -1,6 +1,6 @@
 [project]
 name = "mend-reporting-tool"
-version = "0.2.0"
+version = "0.2.1"
 description = "This is script to generate reports through Mend API v3.0"
 readme = "README.md"
 requires-python = ">=3.12"
@@ -11,5 +11,7 @@ dependencies = [
     "requests>=2.33.1",
 ]
 license = "MIT"
+[project.urls]
+Source = "https://github.com/chelyshev/mend-reporting-tool"
 [project.scripts]
 mend-reporting-tool = "mend_reporting_tool.main:main"

@@ -1,0 +1,7 @@
+- v0.1.0: 
+  - initial version
+- v0.2.0:
+  - update README.md
+- v0.2.1:
+  - fix problem with generation of the CycloneDX SBoM reports
+  - add error handling for unsuccessful authentication

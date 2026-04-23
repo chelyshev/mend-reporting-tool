@@ -22,6 +22,9 @@ def getRefreshToken(baseURL, email, userKey):
   response = requests.post(url, json=payload, headers=headers)
 
   data = response.json()
+  if data["response"] == "Login failed":
+    print(">>> Login failed. Check your Mend User Email and Mend User Key.")
+    sys.exit(1)
   return data["response"]["refreshToken"]
 
 def getAccessToken(baseURL, refreshToken):
@@ -51,7 +54,7 @@ def generateSBOM(baseURL, projectUUID, reportType, reportFormat, accessToken):
     "reportType": reportType,
     "maxDepthLevel": 1,
     "includeVulnerabilities": True,
-    "isMlBomReport": True
+    "isMlBomReport": False
   }
 
   authHeader = 'Bearer ' + accessToken
@@ -144,7 +147,7 @@ def main():
   userEmail = args.userEmail
   userKey = args.userKey
   projectUUID_list = args.projectUUID
-  reportType = args.reportType  # The "vulnerabilities" report type generates vulnerability report. The "sbom" report type generates `spdx` format. The following report types do not work "spdx", "spdx_2_3", "cycloneDX", "cycloneDX_1_5", "cycloneDX_1_6"
+  reportType = args.reportType
   reportFormat = args.format
   extractReport = args.unzip
   refreshToken = getRefreshToken(baseURL, userEmail, userKey)

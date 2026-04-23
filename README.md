@@ -42,7 +42,7 @@ $ ls -l mend-reports/
 
 ### How To Install
 ```shell
-pip install 'mend-reporting-tool==0.1.0'
+pip install 'mend-reporting-tool==0.2.1'
 ```
 
 ### How To Install from source code
