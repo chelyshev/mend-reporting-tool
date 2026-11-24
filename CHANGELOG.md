@@ -10,3 +10,7 @@
   - change default values for the parameters: -reportType, -format, -unzip
   - update README.md
   - add parameter --version
+- v0.3.0
+  - add support for Mend Container SBoM reports
+  - add validation of reportType for SCA and Container scans
+  - update README.md
