@@ -78,7 +78,7 @@ def generateSBOM(baseURL, projectUUID, reportType, reportFormat, accessToken):
   data = response.json()
   # print(data)
   if "errorMessage" in data["response"]:
-    print(f">>> {data["response"]["errorMessage"]}. Check the Report Format parameter (-format) and try again.")
+    print(f">>> {data['response']['errorMessage']}. Check the Report Format parameter (-format) and try again.")
     sys.exit(1)
   return data["response"]["uuid"]
 
