@@ -1,6 +1,6 @@
 [project]
 name = "mend-reporting-tool"
-version = "0.3.0"
+version = "0.3.1"
 description = "This is script to generate reports through Mend API v3.0"
 readme = "README.md"
 requires-python = ">=3.12"
